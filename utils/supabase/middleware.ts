@@ -1,5 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { canAccessAdminPanel, isVendorOrHigher } from '@/lib/roles'
+import type { UserRole } from '@/lib/roles'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -39,40 +41,50 @@ export async function updateSession(request: NextRequest) {
 
   const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
   const isVendorRoute = request.nextUrl.pathname.startsWith('/vendor')
+  const isCustomerRoute = request.nextUrl.pathname.startsWith('/customer')
 
-  if (user && (isAdminRoute || isVendorRoute)) {
-    //Get user profile to check role
+  // Role-based route protection
+
+
+  // Role-based route protection
+  if (user && (isAdminRoute || isVendorRoute || isCustomerRoute)) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single()
 
-    if(profile) {
-      //Check admin access
-      if (isAdminRoute && !['admin', 'super_admin'].includes(profile.role)) {
+    if (profile) {
+      const userRole = profile.role as UserRole
+
+      // Check admin access
+      if (isAdminRoute && !canAccessAdminPanel(userRole)) {
         const url = request.nextUrl.clone()
-        url.pathname = '/'
+        url.pathname = '/unauthorized'
         return NextResponse.redirect(url)
       }
 
-      //Check vendor access
-      if (isVendorRoute && !['vendor', 'admin', 'super_admin'].includes(profile.role)) {
+      // Check vendor access
+      if (isVendorRoute && !isVendorOrHigher(userRole)) {
         const url = request.nextUrl.clone()
-        url.pathname = '/'
+        url.pathname = '/unauthorized'
         return NextResponse.redirect(url)
       }
+
+      // Customer routes are accessible to all authenticated users
+      // but you might want to restrict admin/vendor from customer routes
     }
   }
 
 
-  //Regular auth checks
+  //Regular auth checks - redirect unauthenticated users
   if (
     !user &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth') &&
     request.nextUrl.pathname !== '/signup' &&
-    request.nextUrl.pathname !== '/' 
+    request.nextUrl.pathname !== '/' &&
+    !request.nextUrl.pathname.startsWith('unauthorized')
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()
