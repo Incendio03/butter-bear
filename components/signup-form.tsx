@@ -16,12 +16,12 @@ export function SignupForm({
           <form>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Create an account</h1>
+                <h1 className="text-2xl text-foreground font-bold">Create an account</h1>
                 <p className="text-muted-foreground text-balance">
                   Join Butter Bear today
                 </p>
               </div>
-              <div className="grid gap-3">
+              <div className="grid gap-3 text-foreground">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -31,7 +31,7 @@ export function SignupForm({
                   required
                 />
               </div>
-              <div className="grid gap-3">
+              <div className="grid gap-3 text-foreground">
                 <Label htmlFor="password">Password</Label>
                 <Input 
                   id="password" 
@@ -41,7 +41,7 @@ export function SignupForm({
                   required 
                 />
               </div>
-              <div className="grid gap-3">
+              <div className="grid gap-3 text-foreground">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <Input 
                   id="confirmPassword" 
@@ -54,7 +54,7 @@ export function SignupForm({
               <Button type="submit" className="w-full cursor-pointer" formAction={signup}>
                 Sign up
               </Button>
-              <div className="text-center text-sm">
+              <div className="text-center text-foreground text-sm">
                 Already have an account?{" "}
                 <a href="/login" className="underline underline-offset-4">
                   Sign in
