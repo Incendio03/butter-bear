@@ -1,36 +1,16 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Butter Bear - eCommerce Website
 
-## Getting Started
+Welcome to the official repository for **Butter Bear**, a clothing brand eCommerce website. This is just a personal project to enhance my skills.
 
-First, run the development server:
+> ⚠️ **Note:** This project is still in its early stages and is actively under development. Features and structure are subject to change.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend:** [Next.js](https://nextjs.org/) – A React-based framework for fast, SEO-friendly web applications.
+- **Backend:** [Supabase](https://supabase.com/) – An open-source Firebase alternative for authentication, real-time databases, and storage.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Preview
+![Screenshot 2025-06-10 210212](https://github.com/user-attachments/assets/815b92a1-fb3e-4015-8c11-0371b1e722ed)
+![image](https://github.com/user-attachments/assets/f2037b19-1033-4d1e-8692-880e704a6137)
+![image](https://github.com/user-attachments/assets/cd6e58d3-b8bf-4db2-a657-38b00579728b)
