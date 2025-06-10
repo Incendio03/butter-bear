@@ -10,6 +10,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { ProductCard } from '@/components/product-card'
 
 export default async function Home() {
  
@@ -101,6 +102,88 @@ export default async function Home() {
             </Carousel>
           </div>
         </section>
+
+        {/* Product Section */}
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold text-foreground mb-6">Featured Products</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              <ProductCard 
+                id="1"
+                name="Short-sleeve Polo"
+                price={1299}
+                image="/images/sample_product1.jpg"
+              />
+
+              <ProductCard 
+                id="1"
+                name="Short-sleeve Polo"
+                price={1299}
+                image="/images/sample_product2.jpg"
+              />
+
+              <ProductCard 
+                id="1"
+                name="Short-sleeve Polo"
+                price={1299}
+                image="/images/sample_product3.jpg"
+              />
+
+              <ProductCard 
+                id="1"
+                name="Short-sleeve Polo"
+                price={1299}
+                image="/images/sample_product4.jpg"
+              />
+
+              <ProductCard 
+                id="1"
+                name="Short-sleeve Polo"
+                price={1299}
+                image="/images/sample_product5.jpg"
+              />
+
+              <ProductCard 
+                id="1"
+                name="Short-sleeve Polo"
+                price={1299}
+                image="/images/sample_product1.jpg"
+              />
+
+              <ProductCard 
+                id="1"
+                name="Short-sleeve Polo"
+                price={1299}
+                image="/images/sample_product2.jpg"
+              />
+
+              <ProductCard 
+                id="1"
+                name="Short-sleeve Polo"
+                price={1299}
+                image="/images/sample_product3.jpg"
+              />
+
+              <ProductCard 
+                id="1"
+                name="Short-sleeve Polo"
+                price={1299}
+                image="/images/sample_product4.jpg"
+              />
+
+              <ProductCard 
+                id="1"
+                name="Short-sleeve Polo"
+                price={1299}
+                image="/images/sample_product5.jpg"
+              />
+              
+              {/* Add more product cards here */}
+            </div>
+          </div>
+        </section>
+        
+
       </main>
       
       <Footer/>
