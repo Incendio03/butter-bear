@@ -66,7 +66,7 @@ export function LoginForm({
                   </svg>
                   <span className="sr-only">Login with Apple</span>
                 </Button>
-                <Button variant="outline2" type="button" className="w-full cursor-pointer">
+                <Button variant="outline2" type="button" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4">
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -87,7 +87,7 @@ export function LoginForm({
                   </svg>
                   <span className="sr-only">Login with Google</span>
                 </Button>
-                <Button variant="outline2" type="button" className="w-full cursor-pointer">
+                <Button variant="outline2" type="button" className="w-full">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4">
                     <defs>
                       <linearGradient id="metaGradient" x1="0%" y1="0%" x2="100%" y2="100%">

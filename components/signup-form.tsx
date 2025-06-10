@@ -51,7 +51,7 @@ export function SignupForm({
                   required 
                 />
               </div>
-              <Button type="submit" className="w-full cursor-pointer" formAction={signup}>
+              <Button type="submit" className="w-full" formAction={signup}>
                 Sign up
               </Button>
               <div className="text-center text-foreground text-sm">
