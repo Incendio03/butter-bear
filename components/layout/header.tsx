@@ -1,7 +1,7 @@
-import React from 'react'
-import { Search, User, ShoppingCart } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import React from "react";
+import { Search, User, ShoppingCart, LogOut } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -9,11 +9,29 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu'
+} from "@/components/ui/navigation-menu";
+import { createClient } from "@/utils/supabase/server";
+import Link from "next/link";
+import { logout } from "@/app/auth/signout/route";
 
+export default async function Header() {
+  // Check if user is authenticated
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
+  // Get user profile if authenticated
+  let profile = null;
+  if (user) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("role, email")
+      .eq("id", user.id)
+      .single();
+    profile = data;
+  }
 
-export default function Header() {
   return (
     <header className="bg-background border-b border-border sticky top-0 z-50">
       {/* Top section with branding, search, and auth buttons */}
@@ -38,17 +56,68 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Right: Login/Signup and Cart */}
+          {/* Right: Conditional rendering based on auth */}
           <div className="flex items-center gap-3">
-            <Button variant="ghost" className=" text-primary-foreground hover:bg-primary cursor-pointer" size="icon">
+            <Button
+              variant="ghost"
+              className="text-primary-foreground hover:bg-primary cursor-pointer"
+              size="icon"
+            >
               <ShoppingCart className="h-5 w-5" />
             </Button>
-            <Button variant="outline2" className="bg-primary text-primary-foreground hover:bg-primary/80" asChild>
-              <a href="/login">Login</a>
-            </Button>
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/80" asChild>
-              <a href="/signup">Sign Up</a>
-            </Button>
+
+            {user ? (
+              // User is logged in - show profile and logout
+              <>
+                <Button
+                  variant="ghost"
+                  className="text-foreground hover:bg-primary/10"
+                  asChild
+                >
+                  <Link
+                    href={
+                      profile?.role === "admin"
+                        ? "/admin/dashboard"
+                        : profile?.role === "vendor"
+                        ? "/vendor/dashboard"
+                        : "/customer/dashboard"
+                    }
+                  >
+                    <User className="h-5 w-5 mr-2" />
+                    {profile?.email || user.email}
+                  </Link>
+                </Button>
+
+                {/* Changed: Use Server Action instead of form action */}
+                <form action={logout}>
+                  <Button
+                    type="submit"
+                    variant="outline"
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </Button>
+                </form>
+              </>
+            ) : (
+              // User is NOT logged in - show login/signup
+              <>
+                <Button
+                  variant="outline2"
+                  className="bg-primary text-primary-foreground hover:bg-primary/80"
+                  asChild
+                >
+                  <Link href="/login">Login</Link>
+                </Button>
+                <Button
+                  className="bg-primary text-primary-foreground hover:bg-primary/80"
+                  asChild
+                >
+                  <Link href="/signup">Sign Up</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -58,7 +127,6 @@ export default function Header() {
         <div className="container mx-auto px-4 py-2">
           <NavigationMenu className="mx-auto">
             <NavigationMenuList>
-
               <NavigationMenuItem>
                 <NavigationMenuTrigger>Men</NavigationMenuTrigger>
                 <NavigationMenuContent>
@@ -72,7 +140,8 @@ export default function Header() {
                           Featured Products for Him
                         </div>
                         <p className="text-sm leading-tight text-muted-foreground">
-                          Premium styles made for confidence, comfort, and everyday wear.
+                          Premium styles made for confidence, comfort, and
+                          everyday wear.
                         </p>
                       </NavigationMenuLink>
                     </div>
@@ -102,7 +171,8 @@ export default function Header() {
                           Featured Products for Her
                         </div>
                         <p className="text-sm leading-tight text-muted-foreground">
-                          Elegant and bold pieces designed to elevate your style.
+                          Elegant and bold pieces designed to elevate your
+                          style.
                         </p>
                       </NavigationMenuLink>
                     </div>
@@ -132,7 +202,8 @@ export default function Header() {
                           Featured Unisex Picks
                         </div>
                         <p className="text-sm leading-tight text-muted-foreground">
-                          Inclusive fashion that blends comfort, style, and versatility.
+                          Inclusive fashion that blends comfort, style, and
+                          versatility.
                         </p>
                       </NavigationMenuLink>
                     </div>
@@ -148,11 +219,10 @@ export default function Header() {
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
-
             </NavigationMenuList>
           </NavigationMenu>
         </div>
       </div>
     </header>
-  )
+  );
 }
