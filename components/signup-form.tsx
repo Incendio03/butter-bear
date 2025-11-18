@@ -1,9 +1,9 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { signup } from "@/app/login/actions"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { signup } from "@/app/signup/actions";
 
 export function SignupForm({
   className,
@@ -16,7 +16,9 @@ export function SignupForm({
           <form>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl text-foreground font-bold">Create an account</h1>
+                <h1 className="text-2xl text-foreground font-bold">
+                  Create an account
+                </h1>
                 <p className="text-muted-foreground text-balance">
                   Join Butter Bear today
                 </p>
@@ -33,22 +35,22 @@ export function SignupForm({
               </div>
               <div className="grid gap-3 text-foreground">
                 <Label htmlFor="password">Password</Label>
-                <Input 
-                  id="password" 
-                  name="password" 
-                  type="password" 
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
                   placeholder="Enter your password"
-                  required 
+                  required
                 />
               </div>
               <div className="grid gap-3 text-foreground">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input 
-                  id="confirmPassword" 
-                  name="confirmPassword" 
-                  type="password" 
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
                   placeholder="Confirm your password"
-                  required 
+                  required
                 />
               </div>
               <Button type="submit" className="w-full" formAction={signup}>
@@ -65,9 +67,16 @@ export function SignupForm({
         </CardContent>
       </Card>
       <div className="text-muted-foreground text-center text-xs text-balance max-w-md mx-auto">
-        By clicking continue, you agree to our <a href="#" className="underline underline-offset-4 hover:text-primary">Terms of Service</a>{" "}
-        and <a href="#" className="underline underline-offset-4 hover:text-primary">Privacy Policy</a>.
+        By clicking continue, you agree to our{" "}
+        <a href="#" className="underline underline-offset-4 hover:text-primary">
+          Terms of Service
+        </a>{" "}
+        and{" "}
+        <a href="#" className="underline underline-offset-4 hover:text-primary">
+          Privacy Policy
+        </a>
+        .
       </div>
     </div>
-  )
+  );
 }
