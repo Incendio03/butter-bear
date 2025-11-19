@@ -33,7 +33,6 @@ export function ProductCard({
   return (
     <Card className={cn("w-60 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-2 p-0 m-3", className)}>
       <CardContent className="p-0">
-        {/* Product Image - Expanded to occupy more space */}
         <div className="relative w-full h-56 bg-muted overflow-hidden">
           <Image
             src={image}
@@ -44,7 +43,6 @@ export function ProductCard({
           />
         </div>
 
-        {/* Product Details - Reduced padding for more image space */}
         <div className="p-3 space-y-2">
           {/* Product Name */}
           <div>
