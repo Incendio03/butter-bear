@@ -1,10 +1,9 @@
 "use client";
 
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, User } from "lucide-react";
-import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Star } from "lucide-react";
 
 interface Review {
   id: string;
@@ -28,43 +27,19 @@ export function ProductTabs({
   fullDescription,
   reviews,
 }: ProductTabsProps) {
-  const [activeTab, setActiveTab] = useState<"description" | "reviews">(
-    "description"
-  );
-
   const averageRating =
     reviews.length > 0
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : 0;
 
   return (
-    <div className="w-full">
-      {/* Temporary Tab Navigation */}
-      <div className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground mb-6">
-        <button
-          onClick={() => setActiveTab("description")}
-          className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-all ${
-            activeTab === "description"
-              ? "bg-background text-foreground shadow-sm"
-              : ""
-          }`}
-        >
-          Description
-        </button>
-        <button
-          onClick={() => setActiveTab("reviews")}
-          className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-all ${
-            activeTab === "reviews"
-              ? "bg-background text-foreground shadow-sm"
-              : ""
-          }`}
-        >
-          Reviews ({reviews.length})
-        </button>
-      </div>
+    <Tabs defaultValue="description" className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="description">Description</TabsTrigger>
+        <TabsTrigger value="reviews">Reviews ({reviews.length})</TabsTrigger>
+      </TabsList>
 
-      {/* Description Tab Content */}
-      {activeTab === "description" && (
+      <TabsContent value="description" className="mt-6">
         <Card>
           <CardContent className="p-6">
             <h3 className="text-xl font-semibold mb-4">Product Description</h3>
@@ -73,10 +48,9 @@ export function ProductTabs({
             </div>
           </CardContent>
         </Card>
-      )}
+      </TabsContent>
 
-      {/* Reviews Tab Content */}
-      {activeTab === "reviews" && (
+      <TabsContent value="reviews" className="mt-6">
         <Card>
           <CardContent className="p-6">
             <div className="mb-6">
@@ -111,9 +85,15 @@ export function ProductTabs({
                 reviews.map((review) => (
                   <div key={review.id} className="border-b pb-4 last:border-0">
                     <div className="flex items-start gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                        <User className="h-5 w-5" />
-                      </div>
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage
+                          src={review.user.profile_picture}
+                          alt={review.user.username}
+                        />
+                        <AvatarFallback>
+                          {review.user.username.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
                           <p className="font-medium">{review.user.username}</p>
@@ -144,7 +124,7 @@ export function ProductTabs({
             </div>
           </CardContent>
         </Card>
-      )}
-    </div>
+      </TabsContent>
+    </Tabs>
   );
 }

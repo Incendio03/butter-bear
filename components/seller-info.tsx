@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, User } from "lucide-react";
 import Link from "next/link";
 
@@ -21,12 +21,12 @@ export function SellerInfo({ seller }: SellerInfoProps) {
           href={`/seller/${seller.id}`}
           className="flex items-center gap-3 hover:bg-muted/50 p-2 rounded-lg transition-colors"
         >
-          {/* <Avatar className="h-12 w-12">
+          <Avatar className="h-12 w-12">
             <AvatarImage src={seller.profile_picture} alt={seller.username} />
             <AvatarFallback>
               <User className="h-6 w-6" />
             </AvatarFallback>
-          </Avatar> */}
+          </Avatar> 
           <div className="flex-1">
             <p className="font-medium">{seller.username}</p>
             {seller.location && (
