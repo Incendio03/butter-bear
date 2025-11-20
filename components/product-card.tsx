@@ -1,18 +1,19 @@
-import React from 'react'
-import Image from 'next/image'
-import { ShoppingCart } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { ShoppingCart } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
-  id: string
-  name: string
-  price: number
-  image: string
-  imageAlt?: string
-  className?: string
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  imageAlt?: string;
+  className?: string;
 }
 
 export function ProductCard({
@@ -24,52 +25,59 @@ export function ProductCard({
   className,
 }: ProductCardProps) {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-PH', {
-      style: 'currency',
-      currency: 'PHP',
-    }).format(price)
-  }
+    return new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+    }).format(price);
+  };
 
   return (
-    <Card className={cn("w-60 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-2 p-0 m-3", className)}>
-      <CardContent className="p-0">
-        <div className="relative w-full h-56 bg-muted overflow-hidden">
-          <Image
-            src={image}
-            alt={imageAlt || name}
-            fill
-            className="object-cover"
-            sizes="256px"
-          />
-        </div>
-
-        <div className="p-3 space-y-2">
-          {/* Product Name */}
-          <div>
-            <Label className="text-sm font-medium text-foreground line-clamp-2 leading-tight">
-              {name}
-            </Label>
+    <Link href={`/customer/product/${id}`}>
+      <Card
+        className={cn(
+          "w-60 overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-2 p-0 m-3",
+          className
+        )}
+      >
+        <CardContent className="p-0">
+          <div className="relative w-full h-56 bg-muted overflow-hidden">
+            <Image
+              src={image}
+              alt={imageAlt || name}
+              fill
+              className="object-cover"
+              sizes="256px"
+            />
           </div>
 
-          {/* Price and Add to Cart */}
-          <div className="space-y-2">
+          <div className="p-3 space-y-2">
+            {/* Product Name */}
             <div>
-              <span className="text-lg font-bold text-primary">
-                {formatPrice(price)}
-              </span>
+              <Label className="text-sm font-medium text-foreground line-clamp-2 leading-tight">
+                {name}
+              </Label>
             </div>
-            <Button
-              size="sm"
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              <ShoppingCart className="h-4 w-4 mr-1" />
-              Add to Cart
-            </Button>
+
+            {/* Price and Add to Cart */}
+            <div className="space-y-2">
+              <div>
+                <span className="text-lg font-bold text-primary">
+                  {formatPrice(price)}
+                </span>
+              </div>
+              <Button
+                size="sm"
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                <ShoppingCart className="h-4 w-4 mr-1" />
+                Add to Cart
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
-  )
+        </CardContent>
+      </Card>
+    </Link>
+  );
 }
 
 // Optional: Export a skeleton version for loading states
@@ -87,5 +95,5 @@ export function ProductCardSkeleton({ className }: { className?: string }) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
