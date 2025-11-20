@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { ProductCard } from "@/components/product-card";
+import { getImageUrl } from "@/lib/image";
 
 interface RelatedProductsProps {
   currentProductId: string;
@@ -22,16 +23,6 @@ export async function RelatedProducts({
     return null;
   }
 
-  function getImageUrl(imagePath: string | null): string {
-    if (!imagePath) return "/images/placeholder.jpg";
-    if (imagePath.startsWith("http")) return imagePath;
-
-    const [bucket, ...pathParts] = imagePath.split("/");
-    const filePath = pathParts.join("/");
-    const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
-    return data.publicUrl;
-  }
-
   return (
     <section className="mt-12">
       <h2 className="text-2xl font-bold mb-6">Related Products</h2>
@@ -42,7 +33,7 @@ export async function RelatedProducts({
             id={product.id}
             name={product.product_name}
             price={product.product_price}
-            image={getImageUrl(product.product_img)}
+            image={getImageUrl(product.product_img, supabase)}
           />
         ))}
       </div>

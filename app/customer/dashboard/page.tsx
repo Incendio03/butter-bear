@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { ProductCard } from "@/components/product-card";
 import { createClient } from "@/utils/supabase/server";
+import { getImageUrl } from "@/lib/image";
 
 export default async function CustomerDashboard() {
   // Fetch products from database
@@ -24,26 +25,6 @@ export default async function CustomerDashboard() {
 
   if (error) {
     console.error("Error fetching products", error);
-  }
-
-  // Helper function to get full image URL from storage path
-  function getImageUrl(imagePath: string | null): string {
-    if (!imagePath) {
-      return "/images/placeholder.jpg";
-    }
-
-    // If already a full URL, return as-is
-    if (imagePath.startsWith("http")) {
-      return imagePath;
-    }
-
-    // Generate public URL from storage path
-    const [bucket, ...pathParts] = imagePath.split("/");
-    const filePath = pathParts.join("/");
-
-    const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
-
-    return data.publicUrl;
   }
 
   return (
@@ -155,7 +136,7 @@ export default async function CustomerDashboard() {
                     id={product.id}
                     name={product.product_name}
                     price={product.product_price}
-                    image={getImageUrl(product.product_img)}
+                    image={getImageUrl(product.product_img, supabase)}
                   />
                 ))}
               </div>

@@ -25,8 +25,6 @@ export default async function ProductDetailPage({
     .eq("id", id)
     .single();
 
-  console.log("Product query result:", { product, error, id });
-
   if (error || !product) {
     console.error("Product fetch error:", error);
     notFound();
