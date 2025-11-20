@@ -62,8 +62,11 @@ export default async function Header() {
               variant="ghost"
               className="text-primary-foreground hover:bg-primary cursor-pointer"
               size="icon"
+              asChild
             >
-              <ShoppingCart className="h-5 w-5" />
+              <Link href="/customer/cart">
+                <ShoppingCart className="h-5 w-5" />
+              </Link>
             </Button>
 
             {user ? (
