@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
@@ -6,6 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { addToCart } from "@/lib/cart";
+import { createClient } from "@/utils/supabase/client";
 
 interface ProductCardProps {
   id: string;
@@ -24,11 +28,25 @@ export function ProductCard({
   imageAlt,
   className,
 }: ProductCardProps) {
+  const supabase = createClient();
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-PH", {
       style: "currency",
       currency: "PHP",
     }).format(price);
+  };
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent Link navigation
+
+    try {
+      await addToCart(supabase, id, 1);
+      console.log("Item added to cart", name);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+    }
   };
 
   return (
@@ -67,6 +85,7 @@ export function ProductCard({
               </div>
               <Button
                 size="sm"
+                onClick={handleAddToCart}
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 <ShoppingCart className="h-4 w-4 mr-1" />

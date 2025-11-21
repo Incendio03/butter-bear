@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,47 +8,50 @@ import { Button } from "@/components/ui/button";
 import { Trash2, Plus, Minus } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { getImageUrl } from "@/lib/image";
+import { getCartItems, updateCartQuantity, removeFromCart } from "@/lib/cart";
 
 interface CartItem {
   id: string;
-  productId: string;
-  productName: string;
-  productImg: string;
-  price: number;
+  product_id: string;
   quantity: number;
+  product: {
+    id: string;
+    product_name: string;
+    product_price: number;
+    product_img: string;
+  };
 }
 
 export function CartContent() {
   const supabase = createClient();
-
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: "1",
-      productId: "prod-1",
-      productName: "Classic White T-Shirt",
-      productImg: "products/sample_product1.jpg",
-      price: 599,
-      quantity: 2,
-    },
-    {
-      id: "2",
-      productId: "prod-2",
-      productName: "Denim Blue Jeans",
-      productImg: "products/sample_product2.jpg",
-      price: 1299,
-      quantity: 1,
-    },
-    {
-      id: "3",
-      productId: "prod-3",
-      productName: "Black Leather Jacket",
-      productImg: "products/sample_product3.jpg",
-      price: 3499,
-      quantity: 1,
-    },
-  ]);
-
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+
+  // Load cart items on mount
+  useEffect(() => {
+    loadCart();
+  }, []);
+
+  const loadCart = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await getCartItems(supabase);
+
+      if (error) {
+        console.error("Error loading cart:", error);
+        return;
+      }
+
+      // FIX: Actually set the data instead of empty array
+      setCartItems(data && Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error loading cart:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Toggle individual item selection
   const toggleItemSelection = (itemId: string) => {
@@ -71,31 +74,79 @@ export function CartContent() {
   };
 
   // Update quantity
-  const updateQuantity = (itemId: string, newQuantity: number) => {
-    if (newQuantity < 1) return;
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      )
-    );
+  const updateQuantity = async (cartItemId: string, newQuantity: number) => {
+    if (newQuantity < 1) {
+      await handleRemoveItem(cartItemId);
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      const { error } = await updateCartQuantity(
+        supabase,
+        cartItemId,
+        newQuantity
+      );
+
+      if (error) {
+        return;
+      }
+
+      // Update local state
+      setCartItems(
+        cartItems.map((item) =>
+          item.id === cartItemId ? { ...item, quantity: newQuantity } : item
+        )
+      );
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    } finally {
+      setUpdating(false);
+    }
   };
 
   // Remove item from cart
-  const removeItem = (itemId: string) => {
-    setCartItems(cartItems.filter((item) => item.id !== itemId));
-    const newSelected = new Set(selectedItems);
-    newSelected.delete(itemId);
-    setSelectedItems(newSelected);
+  const handleRemoveItem = async (cartItemId: string) => {
+    try {
+      setUpdating(true);
+      const { error } = await removeFromCart(supabase, cartItemId);
+
+      if (error) {
+        return;
+      }
+
+      // Update local state
+      setCartItems(cartItems.filter((item) => item.id !== cartItemId));
+
+      // Remove from selection
+      const newSelected = new Set(selectedItems);
+      newSelected.delete(cartItemId);
+      setSelectedItems(newSelected);
+    } catch (error) {
+      console.error("Error removing item:", error);
+    } finally {
+      setUpdating(false);
+    }
   };
 
   // Calculate total price for selected items
   const totalPrice = Array.from(selectedItems).reduce((sum, itemId) => {
     const item = cartItems.find((ci) => ci.id === itemId);
-    return sum + (item ? item.price * item.quantity : 0);
+    return sum + (item ? item.product.product_price * item.quantity : 0);
   }, 0);
 
   const isAllSelected =
     cartItems.length > 0 && selectedItems.size === cartItems.length;
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <p className="text-muted-foreground">Loading cart...</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <>
@@ -145,8 +196,8 @@ export function CartContent() {
                       {/* Product Image */}
                       <div className="relative h-24 w-24 flex-shrink-0 bg-muted rounded-lg overflow-hidden">
                         <Image
-                          src={getImageUrl(item.productImg, supabase)}
-                          alt={item.productName}
+                          src={getImageUrl(item.product.product_img, supabase)}
+                          alt={item.product.product_name}
                           fill
                           className="object-cover"
                         />
@@ -154,13 +205,13 @@ export function CartContent() {
 
                       {/* Product Details */}
                       <div className="flex-1">
-                        <Link href={`/customer/product/${item.productId}`}>
+                        <Link href={`/customer/product/${item.product_id}`}>
                           <h3 className="font-semibold hover:text-primary transition-colors">
-                            {item.productName}
+                            {item.product.product_name}
                           </h3>
                         </Link>
                         <p className="text-primary font-bold mt-1">
-                          ₱{item.price.toLocaleString()}
+                          ₱{item.product.product_price.toLocaleString()}
                         </p>
                       </div>
 
@@ -170,7 +221,8 @@ export function CartContent() {
                           onClick={() =>
                             updateQuantity(item.id, item.quantity - 1)
                           }
-                          className="p-1 hover:bg-background rounded transition-colors"
+                          disabled={updating}
+                          className="p-1 hover:bg-background rounded transition-colors disabled:opacity-50"
                         >
                           <Minus className="h-4 w-4" />
                         </button>
@@ -181,7 +233,8 @@ export function CartContent() {
                           onClick={() =>
                             updateQuantity(item.id, item.quantity + 1)
                           }
-                          className="p-1 hover:bg-background rounded transition-colors"
+                          disabled={updating}
+                          className="p-1 hover:bg-background rounded transition-colors disabled:opacity-50"
                         >
                           <Plus className="h-4 w-4" />
                         </button>
@@ -190,7 +243,10 @@ export function CartContent() {
                       {/* Subtotal */}
                       <div className="text-right min-w-24">
                         <p className="font-semibold">
-                          ₱{(item.price * item.quantity).toLocaleString()}
+                          ₱
+                          {(
+                            item.product.product_price * item.quantity
+                          ).toLocaleString()}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {item.quantity}x
@@ -199,8 +255,9 @@ export function CartContent() {
 
                       {/* Delete Button */}
                       <button
-                        onClick={() => removeItem(item.id)}
-                        className="text-destructive hover:bg-destructive/10 p-2 rounded transition-colors"
+                        onClick={() => handleRemoveItem(item.id)}
+                        disabled={updating}
+                        className="text-destructive hover:bg-destructive/10 p-2 rounded transition-colors disabled:opacity-50"
                       >
                         <Trash2 className="h-5 w-5" />
                       </button>
@@ -257,7 +314,7 @@ export function CartContent() {
 
                 {/* Checkout Button */}
                 <Button
-                  disabled={selectedItems.size === 0}
+                  disabled={selectedItems.size === 0 || updating}
                   className="w-full mb-3"
                   size="lg"
                 >
