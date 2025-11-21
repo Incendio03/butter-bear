@@ -32,17 +32,27 @@ export default async function Header() {
     profile = data;
   }
 
+  const logoHref = user
+    ? profile?.role === "admin"
+      ? "/admin/dashboard"
+      : profile?.role === "vendor"
+      ? "/vendor/dashboard"
+      : "/customer/dashboard"
+    : "/";
+
   return (
     <header className="bg-background border-b border-border sticky top-0 z-50">
       {/* Top section with branding, search, and auth buttons */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Left: Branding */}
-          <div className="flex items-center">
-            <h3 className="text-xl font-bold text-foreground">
-              Butter <span className="text-primary">Bear</span>
-            </h3>
-          </div>
+          <Link href={logoHref} className="hover:opacity-80 transition-opacity">
+            <div className="flex items-center">
+              <h3 className="text-xl font-bold text-foreground">
+                Butter <span className="text-primary">Bear</span>
+              </h3>
+            </div>
+          </Link>
 
           {/* Center: Search Bar */}
           <div className="flex-1 max-w-3xl mx-8">
@@ -91,7 +101,6 @@ export default async function Header() {
                   </Link>
                 </Button>
 
-                {/* Changed: Use Server Action instead of form action */}
                 <form action={logout}>
                   <Button
                     type="submit"
