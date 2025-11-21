@@ -13,6 +13,7 @@ import {
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { logout } from "@/app/auth/signout/route";
+import { SearchBar } from "../search-bar";
 
 export default async function Header() {
   // Check if user is authenticated
@@ -54,17 +55,7 @@ export default async function Header() {
             </div>
           </Link>
 
-          {/* Center: Search Bar */}
-          <div className="flex-1 max-w-3xl mx-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                type="search"
-                placeholder="Search for products..."
-                className="pl-10 pr-4 w-full focus:ring-primary focus:border-primary"
-              />
-            </div>
-          </div>
+          <SearchBar />
 
           {/* Right: Conditional rendering based on auth */}
           <div className="flex items-center gap-3">
