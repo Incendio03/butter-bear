@@ -1,12 +1,13 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
-import { canAccessAdminPanel, isVendorOrHigher } from '@/lib/roles'
-import type { UserRole } from '@/lib/roles'
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
+import { getRoleBasedRedirect } from "@/lib/auth-utils";
+import { canAccessAdminPanel, isVendorOrHigher } from "@/lib/roles";
+import type { UserRole } from "@/lib/roles";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
-  })
+  });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,96 +15,89 @@ export async function updateSession(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll()
+          return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value, options }) =>
+            request.cookies.set(name, value)
+          );
           supabaseResponse = NextResponse.next({
             request,
-          })
+          });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
-          )
+          );
         },
       },
     }
-  )
-
-  // Do not run code between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
-
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
+  );
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
-  const isVendorRoute = request.nextUrl.pathname.startsWith('/vendor')
-  const isCustomerRoute = request.nextUrl.pathname.startsWith('/customer')
+  const pathname = request.nextUrl.pathname;
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isVendorRoute = pathname.startsWith("/vendor");
+  const isCustomerRoute = pathname.startsWith("/customer");
 
-  // Role-based route protection
+  // NEW: Home page redirect - authenticated users go to their dashboard
+  if (pathname === "/" && user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
 
+    if (profile) {
+      const userRole = profile.role as UserRole;
+      const redirectUrl = getRoleBasedRedirect(userRole);
+      const url = request.nextUrl.clone();
+      url.pathname = redirectUrl;
+      return NextResponse.redirect(url);
+    }
+  }
 
   // Role-based route protection
   if (user && (isAdminRoute || isVendorRoute || isCustomerRoute)) {
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
 
     if (profile) {
-      const userRole = profile.role as UserRole
+      const userRole = profile.role as UserRole;
 
       // Check admin access
       if (isAdminRoute && !canAccessAdminPanel(userRole)) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/unauthorized'
-        return NextResponse.redirect(url)
+        const url = request.nextUrl.clone();
+        url.pathname = "/unauthorized";
+        return NextResponse.redirect(url);
       }
 
       // Check vendor access
       if (isVendorRoute && !isVendorOrHigher(userRole)) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/unauthorized'
-        return NextResponse.redirect(url)
+        const url = request.nextUrl.clone();
+        url.pathname = "/unauthorized";
+        return NextResponse.redirect(url);
       }
-
-      // Customer routes are accessible to all authenticated users
-      // but you might want to restrict admin/vendor from customer routes
     }
   }
 
-
-  //Regular auth checks - redirect unauthenticated users
+  // Regular auth checks - redirect unauthenticated users
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth') &&
-    request.nextUrl.pathname !== '/signup' &&
-    request.nextUrl.pathname !== '/' &&
-    !request.nextUrl.pathname.startsWith('unauthorized')
+    !pathname.startsWith("/login") &&
+    !pathname.startsWith("/auth") &&
+    pathname !== "/signup" &&
+    pathname !== "/" &&
+    !pathname.startsWith("/unauthorized")
   ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/'
-    return NextResponse.redirect(url)
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    return NextResponse.redirect(url);
   }
 
-  // IMPORTANT: You *must* return the supabaseResponse object as it is.
-  // If you're creating a new response object with NextResponse.next() make sure to:
-  // 1. Pass the request in it, like so:
-  //    const myNewResponse = NextResponse.next({ request })
-  // 2. Copy over the cookies, like so:
-  //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-  // 3. Change the myNewResponse object to fit your needs, but avoid changing
-  //    the cookies!
-  // 4. Finally:
-  //    return myNewResponse
-  // If this is not done, you may be causing the browser and server to go out
-  // of sync and terminate the user's session prematurely!
-
-  return supabaseResponse
+  return supabaseResponse;
 }
