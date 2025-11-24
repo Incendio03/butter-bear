@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
-import { logout } from "@/app/auth/signout/route";
+import { logout } from "@/app/(auth)/signout/route";
 import { SearchBar } from "../search-bar";
 
 export default async function Header() {

@@ -1,8 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
-import Image from "next/image";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
 import { ProductImageCarousel } from "@/components/product-image-carousel";
 import { ProductActions } from "@/components/product-actions";
 import { SellerInfo } from "@/components/seller-info";
@@ -68,7 +65,6 @@ export default async function ProductDetailPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <main className="flex-1 bg-background">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
@@ -121,7 +117,6 @@ export default async function ProductDetailPage({
           />
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

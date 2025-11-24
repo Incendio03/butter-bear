@@ -1,6 +1,4 @@
 import React from "react";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +27,6 @@ export default async function CustomerDashboard() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
       <main className="bg-background flex-1">
         {/* Hero Advertisement Carousel */}
         <section className="w-full py-8">
@@ -150,8 +147,6 @@ export default async function CustomerDashboard() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }
