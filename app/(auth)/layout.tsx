@@ -1,4 +1,4 @@
-import Header from "@/components/layout/header";
+import AuthHeader from "@/components/layout/auth-header";
 import Footer from "@/components/layout/footer";
 
 export default function AuthLayout({
@@ -8,7 +8,7 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <AuthHeader />
       <main className="flex-1 bg-background">
         <div className="container mx-auto px-4 py-8">{children}</div>
       </main>
