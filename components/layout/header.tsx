@@ -13,7 +13,7 @@ import {
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { logout } from "@/app/(auth)/actions";
-import { SearchBar } from "../forms/search-form";
+import { SearchForm } from "../forms/search-form";
 
 export default async function Header() {
   // Check if user is authenticated
@@ -55,7 +55,7 @@ export default async function Header() {
             </div>
           </Link>
 
-          <SearchBar />
+          <SearchForm />
 
           {/* Right: Conditional rendering based on auth */}
           <div className="flex items-center gap-3">
