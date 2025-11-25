@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Search } from "lucide-react";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
 
 export function SearchBar() {

@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { ProductCard } from "@/components/product-card";
+import { ProductCard } from "@/components/products/product-card";
 import { getImageUrl } from "@/lib/image";
 
 interface RelatedProductsProps {

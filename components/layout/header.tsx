@@ -13,7 +13,7 @@ import {
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { logout } from "@/app/(auth)/actions";
-import { SearchBar } from "../search-bar";
+import { SearchBar } from "../forms/search-form";
 
 export default async function Header() {
   // Check if user is authenticated

@@ -1,10 +1,10 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
-import { ProductImageCarousel } from "@/components/product-image-carousel";
-import { ProductActions } from "@/components/product-actions";
-import { SellerInfo } from "@/components/seller-info";
-import { ProductTabs } from "@/components/product-tabs";
-import { RelatedProducts } from "@/components/related-products";
+import { ProductImageCarousel } from "@/components/products/product-image-carousel";
+import { ProductActions } from "@/components/products/product-actions";
+import { SellerInfo } from "@/components/products/seller-info";
+import { ProductTabs } from "@/components/products/product-tabs";
+import { RelatedProducts } from "@/components/products/related-products";
 
 export default async function ProductDetailPage({
   params,
