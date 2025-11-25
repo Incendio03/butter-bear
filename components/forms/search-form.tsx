@@ -14,7 +14,7 @@ export function SearchForm() {
 
     if (query.trim()) {
       // Redirect to search results page with query parameter
-      router.push(`search?q=${encodeURIComponent(query)}`);
+      router.push(`/customer/search?q=${encodeURIComponent(query)}`);
     }
   };
 
