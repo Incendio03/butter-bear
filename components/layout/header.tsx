@@ -1,6 +1,5 @@
 import React from "react";
-import { Search, User, ShoppingCart, LogOut } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { User, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -10,10 +9,18 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
-import { logout } from "@/app/(auth)/actions";
 import { SearchForm } from "../forms/search-form";
+import { LogoutButton } from "./logout-button";
 
 export default async function Header() {
   // Check if user is authenticated
@@ -72,37 +79,38 @@ export default async function Header() {
 
             {user ? (
               // User is logged in - show profile and logout
-              <>
-                <Button
-                  variant="ghost"
-                  className="text-foreground hover:bg-primary/10"
-                  asChild
-                >
-                  <Link
-                    href={
-                      profile?.role === "admin"
-                        ? "/admin/dashboard"
-                        : profile?.role === "vendor"
-                        ? "/vendor/dashboard"
-                        : "/customer/dashboard"
-                    }
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="text-foreground hover:bg-primary/10"
                   >
                     <User className="h-5 w-5 mr-2" />
                     {profile?.email || user.email}
-                  </Link>
-                </Button>
-
-                <form action={logout}>
-                  <Button
-                    type="submit"
-                    variant="outline"
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Logout
                   </Button>
-                </form>
-              </>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem asChild>
+                    <Link href="/customer/profile">
+                      <User className="h-4 w-4 mr-2" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link href="/customer/settings">Settings</Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem>
+                    <LogoutButton />
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               // User is NOT logged in - show login/signup
               <>
