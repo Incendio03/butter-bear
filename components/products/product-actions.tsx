@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { addToCart } from "@/lib/cart";
+import { toast } from "sonner";
+import { createClient } from "@/utils/supabase/client";
 
 interface Variant {
   id: string;
@@ -26,10 +29,13 @@ export function ProductActions({
   price,
 }: ProductActionsProps) {
   const router = useRouter();
+  const supabase = createClient();
+
   const [quantity, setQuantity] = useState(1);
   const [selectedVariants, setSelectedVariants] = useState<
     Record<string, string>
   >({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const variantTypes = [...new Set(variants.map((v) => v.type))];
 
@@ -37,8 +43,40 @@ export function ProductActions({
   const decreaseQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
 
   const handleAddToCart = async () => {
-    // TODO: Implement add to cart logic
-    console.log("Add to cart", { productId, quantity, selectedVariants });
+    try {
+      setIsLoading(true);
+
+      // Validate variant selection if product has variants
+      if (variantTypes.length > 0) {
+        const missingVariants = variantTypes.filter(
+          (type) => !selectedVariants[type]
+        );
+        if (missingVariants.length > 0) {
+          toast.error(`Please select: ${missingVariants.join(", ")}`);
+          return;
+        }
+      }
+
+      const { data, error } = await addToCart(
+        supabase,
+        productId,
+        quantity,
+        selectedVariants.color || null,
+        selectedVariants.size || null
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success(`Added ${quantity} item(s) to cart`);
+      setQuantity(1);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add item to cart");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleBuyNow = async () => {
