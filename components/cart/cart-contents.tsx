@@ -8,19 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Trash2, Plus, Minus } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { getImageUrl } from "@/lib/image";
-import { getCartItems, updateCartQuantity, removeFromCart } from "@/lib/cart";
-
-interface CartItem {
-  id: string;
-  product_id: string;
-  quantity: number;
-  product: {
-    id: string;
-    product_name: string;
-    product_price: number;
-    product_img: string;
-  };
-}
+import {
+  getCartItems,
+  updateCartQuantity,
+  removeFromCart,
+  CartItem,
+} from "@/lib/cart";
 
 export function CartContent() {
   const supabase = createClient();
@@ -100,6 +93,42 @@ export function CartContent() {
       );
     } catch (error) {
       console.error("Error updating quantity:", error);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const updateVariant = async (
+    cartItemId: string,
+    color: string | null,
+    size: string | null
+  ) => {
+    try {
+      setUpdating(true);
+      const { error } = await supabase
+        .from("cart_items")
+        .update({
+          variant_color: color,
+          variant_size: size,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", cartItemId);
+
+      if (error) {
+        console.error("Error updating variant:", error);
+        return;
+      }
+
+      // Update local state
+      setCartItems(
+        cartItems.map((item) =>
+          item.id === cartItemId
+            ? { ...item, variant_color: color, variant_size: size }
+            : item
+        )
+      );
+    } catch (error) {
+      console.error("Error updating variant:", error);
     } finally {
       setUpdating(false);
     }
@@ -210,6 +239,76 @@ export function CartContent() {
                             {item.product.product_name}
                           </h3>
                         </Link>
+
+                        {/* Variant Selector */}
+                        {(item.product.product_variant_color?.length ?? 0) >
+                          0 ||
+                        (item.product.product_variant_size?.length ?? 0) > 0 ? (
+                          <div className="mt-2 space-y-2">
+                            {/* Color Variant */}
+                            {(item.product.product_variant_color?.length ?? 0) >
+                              0 && (
+                              <select
+                                value={item.variant_color || ""}
+                                onChange={(e) =>
+                                  updateVariant(
+                                    item.id,
+                                    e.target.value || null,
+                                    item.variant_size
+                                  )
+                                }
+                                disabled={updating}
+                                className="text-sm border rounded px-2 py-1 bg-background"
+                              >
+                                <option value="">Select Color</option>
+                                {item.product.product_variant_color?.map(
+                                  (color) => (
+                                    <option key={color} value={color}>
+                                      {color}
+                                    </option>
+                                  )
+                                )}
+                              </select>
+                            )}
+
+                            {/* Size Variant */}
+
+                            {(item.product.product_variant_size?.length ?? 0) >
+                              0 && (
+                              <select
+                                value={item.variant_size || ""}
+                                onChange={(e) =>
+                                  updateVariant(
+                                    item.id,
+                                    item.variant_color,
+                                    e.target.value || null
+                                  )
+                                }
+                                disabled={updating}
+                                className="text-sm border rounded px-2 py-1 bg-background ml-2"
+                              >
+                                <option value="">Select Size</option>
+                                {item.product.product_variant_size?.map(
+                                  (size) => (
+                                    <option key={size} value={size}>
+                                      {size}
+                                    </option>
+                                  )
+                                )}
+                              </select>
+                            )}
+
+                            {/* Current Selection Display */}
+                            {(item.variant_color || item.variant_size) && (
+                              <p className="text-sm text-muted-foreground mt-1">
+                                {[item.variant_color, item.variant_size]
+                                  .filter(Boolean)
+                                  .join(", ")}
+                              </p>
+                            )}
+                          </div>
+                        ) : null}
+
                         <p className="text-primary font-bold mt-1">
                           ₱{item.product.product_price.toLocaleString()}
                         </p>
