@@ -83,14 +83,6 @@ export function ProductCard({
                   {formatPrice(price)}
                 </span>
               </div>
-              <Button
-                size="sm"
-                onClick={handleAddToCart}
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-              >
-                <ShoppingCart className="h-4 w-4 mr-1" />
-                Add to Cart
-              </Button>
             </div>
           </div>
         </CardContent>
