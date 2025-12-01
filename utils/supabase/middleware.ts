@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getRoleBasedRedirect } from "@/lib/auth-utils";
 import { canAccessAdminPanel, isVendorOrHigher } from "@/lib/roles";
 import type { UserRole } from "@/lib/roles";
+import path from "path";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -40,8 +41,17 @@ export async function updateSession(request: NextRequest) {
   const isAdminRoute = pathname.startsWith("/admin");
   const isVendorRoute = pathname.startsWith("/vendor");
   const isCustomerRoute = pathname.startsWith("/customer");
+  const isAuthRoute =
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/auth") ||
+    pathname === "/signup";
+  const isPublicRoute =
+    pathname === "/" ||
+    pathname === "/unauthorized" ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api");
 
-  // NEW: Home page redirect - authenticated users go to their dashboard
+  // Redirect authenticated users from home page to their dashboard
   if (pathname === "/" && user) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -56,6 +66,14 @@ export async function updateSession(request: NextRequest) {
       url.pathname = redirectUrl;
       return NextResponse.redirect(url);
     }
+  }
+
+  // Protect all protected routes - require authentication
+  if (!user && (isAdminRoute || isVendorRoute || isCustomerRoute)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(url);
   }
 
   // Role-based route protection
@@ -80,6 +98,17 @@ export async function updateSession(request: NextRequest) {
       if (isVendorRoute && !isVendorOrHigher(userRole)) {
         const url = request.nextUrl.clone();
         url.pathname = "/unauthorized";
+        return NextResponse.redirect(url);
+      }
+
+      // Customer routes - only allow customers (and technically higher roles)
+      if (
+        isCustomerRoute &&
+        userRole !== "customer" &&
+        !canAccessAdminPanel(userRole)
+      ) {
+        const url = request.nextUrl.clone();
+        url.pathname = getRoleBasedRedirect(userRole);
         return NextResponse.redirect(url);
       }
     }
