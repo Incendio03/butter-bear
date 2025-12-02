@@ -1,3 +1,7 @@
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -5,15 +9,48 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/app/(auth)/login/actions";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+interface LoginFormProps extends React.ComponentProps<"div"> {
+  redirectTo?: string;
+}
+
+export function LoginForm({ className, redirectTo, ...props }: LoginFormProps) {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const result = await login(formData);
+
+      if (!result.success) {
+        setError(result.error || "Login failed");
+        setIsLoading(false);
+        return;
+      }
+
+      // Use redirect from middleware, or fall back to role-based redirect
+      const destination =
+        redirectTo || result.defaultRedirect || "/customer/dashboard";
+
+      router.push(destination);
+      router.refresh();
+    } catch (error) {
+      setError("An unexpected error occured");
+      setIsLoading(false);
+      console.error("Login error:", error);
+    }
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form onSubmit={handleSubmit} className="p-6 md:p-8">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-accent-foreground text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -21,6 +58,13 @@ export function LoginForm({
                   Login to your Butter Bear account
                 </p>
               </div>
+
+              {error && (
+                <div className="bg-destructive/10 text-destructive p-3 rounded text-sm">
+                  {error}
+                </div>
+              )}
+
               <div className="grid gap-3 text-accent-foreground">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -29,6 +73,7 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
+                  disabled={isLoading}
                 />
               </div>
               <div className="grid gap-3 text-accent-foreground">
@@ -41,12 +86,18 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" name="password" type="password" required />
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  disabled={isLoading}
+                />
               </div>
               <Button
                 type="submit"
                 className="w-full cursor-pointer"
-                formAction={login}
+                disabled={isLoading}
               >
                 Login
               </Button>
