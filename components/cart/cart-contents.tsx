@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trash2, Plus, Minus } from "lucide-react";
+import { LoadingState } from "../ui/loading-state";
 import { createClient } from "@/utils/supabase/client";
 import { getImageUrl } from "@/lib/image";
 import {
@@ -169,11 +170,10 @@ export function CartContent() {
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="p-8 text-center">
-          <p className="text-muted-foreground">Loading cart...</p>
-        </CardContent>
-      </Card>
+      <LoadingState
+        message="Loading Cart"
+        subtext="Fetching your shopping items..."
+      />
     );
   }
 
