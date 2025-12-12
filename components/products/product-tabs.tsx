@@ -42,7 +42,9 @@ export function ProductTabs({
       <TabsContent value="description" className="mt-6">
         <Card>
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold mb-4">Product Description</h3>
+            <h3 className="text-xl text-primary font-semibold mb-4">
+              Product Description
+            </h3>
             <div className="prose max-w-none text-muted-foreground">
               {fullDescription || "No detailed description available."}
             </div>
