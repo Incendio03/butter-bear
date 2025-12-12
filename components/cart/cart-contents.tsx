@@ -202,7 +202,7 @@ export function CartContent() {
                     onChange={toggleSelectAll}
                     className="w-5 h-5 rounded border-gray-300 cursor-pointer"
                   />
-                  <label className="font-semibold cursor-pointer">
+                  <label className="font-semibold text-primary-foreground cursor-pointer">
                     Select All Items ({cartItems.length})
                   </label>
                 </div>
@@ -235,7 +235,7 @@ export function CartContent() {
                       {/* Product Details */}
                       <div className="flex-1">
                         <Link href={`/customer/product/${item.product_id}`}>
-                          <h3 className="font-semibold hover:text-primary transition-colors">
+                          <h3 className="font-semibold text-accent-foreground transition-colors">
                             {item.product.product_name}
                           </h3>
                         </Link>
@@ -258,7 +258,7 @@ export function CartContent() {
                                   )
                                 }
                                 disabled={updating}
-                                className="text-sm border rounded px-2 py-1 bg-background"
+                                className="text-sm text-muted-foreground border rounded border-muted-foreground px-2 py-1 bg-background cursor-pointer"
                               >
                                 <option value="">Select Color</option>
                                 {item.product.product_variant_color?.map(
@@ -285,7 +285,7 @@ export function CartContent() {
                                   )
                                 }
                                 disabled={updating}
-                                className="text-sm border rounded px-2 py-1 bg-background ml-2"
+                                className="text-sm text-muted-foreground border rounded border-muted-foreground px-2 py-1 bg-background ml-2 cursor-pointer"
                               >
                                 <option value="">Select Size</option>
                                 {item.product.product_variant_size?.map(
@@ -321,11 +321,11 @@ export function CartContent() {
                             updateQuantity(item.id, item.quantity - 1)
                           }
                           disabled={updating}
-                          className="p-1 hover:bg-background rounded transition-colors disabled:opacity-50"
+                          className="text-muted-foreground p-1 hover:bg-background rounded transition-colors disabled:opacity-50"
                         >
                           <Minus className="h-4 w-4" />
                         </button>
-                        <span className="w-8 text-center font-semibold">
+                        <span className="w-8 text-center text-muted-foreground font-semibold">
                           {item.quantity}
                         </span>
                         <button
@@ -333,7 +333,7 @@ export function CartContent() {
                             updateQuantity(item.id, item.quantity + 1)
                           }
                           disabled={updating}
-                          className="p-1 hover:bg-background rounded transition-colors disabled:opacity-50"
+                          className="text-muted-foreground p-1 hover:bg-background rounded transition-colors disabled:opacity-50"
                         >
                           <Plus className="h-4 w-4" />
                         </button>
@@ -341,7 +341,7 @@ export function CartContent() {
 
                       {/* Subtotal */}
                       <div className="text-right min-w-24">
-                        <p className="font-semibold">
+                        <p className="font-semibold text-accent">
                           ₱
                           {(
                             item.product.product_price * item.quantity
@@ -356,7 +356,7 @@ export function CartContent() {
                       <button
                         onClick={() => handleRemoveItem(item.id)}
                         disabled={updating}
-                        className="text-destructive hover:bg-destructive/10 p-2 rounded transition-colors disabled:opacity-50"
+                        className="text-destructive hover:bg-destructive/30 bg-destructive/20 p-2 rounded transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         <Trash2 className="h-5 w-5" />
                       </button>
@@ -371,7 +371,9 @@ export function CartContent() {
           <div>
             <Card className="sticky top-4">
               <CardContent className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+                <h2 className="text-xl text-primary font-semibold mb-4">
+                  Order Summary
+                </h2>
 
                 {/* Selected Items Count */}
                 <div className="mb-4 p-3 bg-muted rounded-lg">
@@ -387,17 +389,19 @@ export function CartContent() {
                 <div className="border-t border-b py-4 mb-6">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-muted-foreground">Subtotal:</span>
-                    <span className="font-semibold">
+                    <span className="font-medium text-primary-foreground">
                       ₱{totalPrice.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-muted-foreground">Shipping:</span>
-                    <span className="font-semibold">₱0.00</span>
+                    <span className="font-medium text-primary-foreground">
+                      ₱0.00
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Tax:</span>
-                    <span className="font-semibold">
+                    <span className="font-medium text-primary-foreground">
                       ₱{(totalPrice * 0.12).toLocaleString()}
                     </span>
                   </div>
@@ -405,7 +409,9 @@ export function CartContent() {
 
                 {/* Total */}
                 <div className="flex justify-between items-center mb-6">
-                  <span className="text-lg font-semibold">Total:</span>
+                  <span className="text-lg text-primary-foreground font-semibold">
+                    Total:
+                  </span>
                   <span className="text-2xl font-bold text-primary">
                     ₱{(totalPrice * 1.12).toLocaleString()}
                   </span>
@@ -422,7 +428,7 @@ export function CartContent() {
 
                 {/* Continue Shopping Button */}
                 <Link href="/customer/dashboard">
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline3" className="w-full">
                     Continue Shopping
                   </Button>
                 </Link>
