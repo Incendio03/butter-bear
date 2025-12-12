@@ -90,7 +90,9 @@ export function ProductActions({
       {/* Variant Selection */}
       {variantTypes.map((type) => (
         <div key={type} className="space-y-2">
-          <Label className="text-sm font-medium capitalize">{type}</Label>
+          <Label className="text-sm text-primary-foreground font-medium capitalize">
+            {type}
+          </Label>
           <div className="flex flex-wrap gap-2">
             {variants
               .filter((v) => v.type === type)
@@ -100,7 +102,7 @@ export function ProductActions({
                   variant={
                     selectedVariants[type] === variant.value
                       ? "default"
-                      : "outline"
+                      : "secondary"
                   }
                   size="sm"
                   onClick={() =>
@@ -119,10 +121,12 @@ export function ProductActions({
 
       {/* Quantity Selector */}
       <div className="space-y-2">
-        <Label className="text-sm font-medium">Quantity</Label>
+        <Label className="text-sm text-primary-foreground font-medium">
+          Quantity
+        </Label>
         <div className="flex items-center gap-3">
           <Button
-            variant="outline"
+            variant="secondary"
             size="icon"
             onClick={decreaseQuantity}
             disabled={quantity <= 1}
@@ -135,24 +139,24 @@ export function ProductActions({
             onChange={(e) =>
               setQuantity(Math.max(1, parseInt(e.target.value) || 1))
             }
-            className="w-20 text-center"
+            className="w-20 text-muted-foreground text-center"
             min="1"
           />
-          <Button variant="outline" size="icon" onClick={increaseQuantity}>
+          <Button variant="secondary" size="icon" onClick={increaseQuantity}>
             <Plus className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
       {/* Total Price */}
-      <div className="text-lg font-semibold">
+      <div className="text-lg text-primary-foreground font-semibold">
         Total: ₱{(price * quantity).toLocaleString()}
       </div>
 
       {/* Action Buttons */}
       <div className="flex gap-3">
         <Button
-          variant="outline"
+          variant="secondary"
           size="lg"
           className="flex-1"
           onClick={handleAddToCart}

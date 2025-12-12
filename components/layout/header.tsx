@@ -115,7 +115,7 @@ export default async function Header() {
               // User is NOT logged in - show login/signup
               <>
                 <Button
-                  variant="outline2"
+                  variant="ghost"
                   className="bg-primary text-primary-foreground hover:bg-primary/80"
                   asChild
                 >
