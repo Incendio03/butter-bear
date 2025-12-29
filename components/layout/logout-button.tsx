@@ -10,9 +10,9 @@ export function LogoutButton() {
       onClick={async () => {
         await logout();
       }}
-      className="text-destructive cursor-pointer"
+      className="text-foreground cursor-pointer"
     >
-      <LogOut className="h-4 w-4 mr-2" />
+      {/* <LogOut className="text-foreground h-4 w-4 mr-2" /> */}
       Logout
     </DropdownMenuItem>
   );

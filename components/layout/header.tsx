@@ -90,12 +90,9 @@ export default async function Header() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-
                   <DropdownMenuItem asChild>
                     <Link href="/customer/profile">
-                      <User className="h-4 w-4 mr-2" />
+                      {/* <User className="text-foreground h-4 w-4 mr-2" /> */}
                       Profile
                     </Link>
                   </DropdownMenuItem>
